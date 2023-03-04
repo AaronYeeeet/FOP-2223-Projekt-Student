@@ -12,6 +12,8 @@ import static org.tudalgo.algoutils.student.Student.crash;
 @SuppressWarnings("ClassCanBeRecord")
 public final class Location implements Comparable<Location> {
 
+    //test
+
     private final static Comparator<Location> COMPARATOR =
         Comparator.comparing(Location::getX).thenComparing(Location::getY);
 
