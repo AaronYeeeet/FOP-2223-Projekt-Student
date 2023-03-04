@@ -32,7 +32,7 @@ class RegionImpl implements Region {
 
     @Override
     public @Nullable Node getNode(Location location) {
-        return crash(); // TODO: H2.1 - remove if implemented
+        return nodes.get(location);  //test
     }
 
     @Override
@@ -60,7 +60,11 @@ class RegionImpl implements Region {
      * @param node the {@link NodeImpl} to add.
      */
     void putNode(NodeImpl node) {
-        crash(); // TODO: H2.2 - remove if implemented
+        if (node.region != this){
+            throw new IllegalArgumentException("Node " + node.toString() + " has incorrect region");
+        } else {
+            nodes.put(node.getLocation(), node);
+        }
     }
 
     /**
