@@ -13,6 +13,7 @@ import static org.tudalgo.algoutils.student.Student.crash;
 public final class Location implements Comparable<Location> {
 
     //test
+    //test2
 
     private final static Comparator<Location> COMPARATOR =
         Comparator.comparing(Location::getX).thenComparing(Location::getY);
