@@ -75,23 +75,40 @@ public final class Location implements Comparable<Location> {
         return new Location(x - other.x, y - other.y);
     }
 
+    /**
+     * Compares the coordinates of two Locations.
+     * @param o the Location to be compared.
+     * @return 0 if the Locations are equal, a negative integer if the x coordinate is smaller than the one to be compared or if both x coordinates are equal and the y coordinate is smaller than the one compared to, a positive integer otherwise.
+     */
     @Override
     public int compareTo(@NotNull Location o) {
-        return 0;
+        return COMPARATOR.compare(this,o);              //H1.1
+    }
+
+    /**
+     * Creates a unique hash code for all Coordinates with x and y from -1024 to 1023.
+     * @return the hash code.
+     */
+    @Override
+    public int hashCode() {                             //H1.2
+        int r = 0;
+        if (x<=1023&&x>=-1024&&y<=1023&&y>=-1024) {
+            int xHash = x + 1024;
+            int yHash = y + 1024;
+            r = xHash * 2048 + yHash;
+        }
+        return r;
     }
 
     @Override
-    public int hashCode() {
-        return crash(); // TODO: H1.2 - remove if implemented
+    public boolean equals(Object o) {                   //H1.3
+        if (o==null||!(o instanceof Location))
+            return false;
+        return this.hashCode()==o.hashCode();
     }
 
     @Override
-    public boolean equals(Object o) {
-        return crash(); // TODO: H1.3 - remove if implemented
-    }
-
-    @Override
-    public String toString() {
-        return crash(); // TODO: H1.4 - remove if implemented
+    public String toString() {                          //H1.4
+        return "("+x+","+y+")";
     }
 }
