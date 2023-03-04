@@ -32,12 +32,19 @@ class RegionImpl implements Region {
 
     @Override
     public @Nullable Node getNode(Location location) {
-        return nodes.get(location);  //test
+        return null;  //test
     }
 
     @Override
     public @Nullable Edge getEdge(Location locationA, Location locationB) {
-        return crash(); // TODO: H2.3 - remove if implemented
+        if (edges.get(locationA)!=null) {
+            Edge edge = edges.get(locationA).get(locationB);
+            if (edge != null) return edge;
+        }
+        if (edges.get(locationB)!=null) {
+            return edges.get(locationB).get(locationA);
+        }
+        else return null;
     }
 
     @Override
