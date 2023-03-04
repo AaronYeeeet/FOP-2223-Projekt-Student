@@ -14,6 +14,7 @@ public final class Location implements Comparable<Location> {
 
     //test
     //test2
+    //test3
 
     private final static Comparator<Location> COMPARATOR =
         Comparator.comparing(Location::getX).thenComparing(Location::getY);
