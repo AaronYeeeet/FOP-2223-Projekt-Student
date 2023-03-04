@@ -32,7 +32,7 @@ class RegionImpl implements Region {
 
     @Override
     public @Nullable Node getNode(Location location) {
-        return nodes.get(location);
+        return nodes.get(location);  //test
     }
 
     @Override
