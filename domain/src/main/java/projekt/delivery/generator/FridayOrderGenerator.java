@@ -21,7 +21,7 @@ public class FridayOrderGenerator implements OrderGenerator {
 
     private final Random random;
 
-    private Map<Long,List<ConfirmedOrder>> orders;
+    private Map<Long,List<ConfirmedOrder>> orders = new HashMap<>();
 
     private List<VehicleManager.OccupiedNeighborhood> neighborhoods;
     private List<VehicleManager.OccupiedRestaurant> restaurants;
