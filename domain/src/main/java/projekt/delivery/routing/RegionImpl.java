@@ -32,12 +32,19 @@ class RegionImpl implements Region {
 
     @Override
     public @Nullable Node getNode(Location location) {
-        return crash(); // TODO: H2.1 - remove if implemented
+        return null;  //test
     }
 
     @Override
     public @Nullable Edge getEdge(Location locationA, Location locationB) {
-        return crash(); // TODO: H2.3 - remove if implemented
+        if (edges.get(locationA)!=null) {
+            Edge edge = edges.get(locationA).get(locationB);
+            if (edge != null) return edge;
+        }
+        if (edges.get(locationB)!=null) {
+            return edges.get(locationB).get(locationA);
+        }
+        else return null;
     }
 
     @Override
@@ -60,7 +67,11 @@ class RegionImpl implements Region {
      * @param node the {@link NodeImpl} to add.
      */
     void putNode(NodeImpl node) {
-        crash(); // TODO: H2.2 - remove if implemented
+        if (node.region != this){
+            throw new IllegalArgumentException("Node " + node.toString() + " has incorrect region");
+        } else {
+            nodes.put(node.getLocation(), node);
+        }
     }
 
     /**
