@@ -60,7 +60,6 @@ public class MainMenuScene extends MenuScene<MainMenuSceneController> {
             createStartSimulationButton(),
             createSimulationRunsHBox(),
             createDeliveryServiceChoiceBox()
-            //TODO H11.2
         );
 
         optionsVbox.getChildren().stream()
