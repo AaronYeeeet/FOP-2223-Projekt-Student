@@ -31,15 +31,34 @@ class VehicleManagerImpl implements VehicleManager {
     }
 
     private Map<Region.Node, OccupiedNodeImpl<? extends Region.Node>> toOccupiedNodes(Collection<Region.Node> nodes) {
-        return crash(); // TODO: H6.1 - remove if implemented
+        Map<Region.Node, OccupiedNodeImpl<? extends Region.Node>> map = new HashMap<>();
+        for (Region.Node next : nodes) {
+            OccupiedNodeImpl<? extends Region.Node> project;
+            if (next instanceof Region.Restaurant) {
+                project = new OccupiedRestaurantImpl((Region.Restaurant) next, this);
+            } else if (next instanceof Region.Neighborhood) {
+                project = new OccupiedNeighborhoodImpl((Region.Neighborhood) next, this);
+            } else {
+                project = new OccupiedNodeImpl<>(next, this);
+            }
+            map.put(next, project);
+        }
+        return Collections.unmodifiableMap(map);
     }
 
     private Map<Region.Edge, OccupiedEdgeImpl> toOccupiedEdges(Collection<Region.Edge> edges) {
-        return crash(); // TODO: H6.1 - remove if implemented
+        Map<Region.Edge, OccupiedEdgeImpl> map = new HashMap<>();
+        for (Region.Edge next : edges) {
+            map.put(next, new OccupiedEdgeImpl(next,this));
+        }
+        return Collections.unmodifiableMap(map);
     }
 
     private Set<AbstractOccupied<?>> getAllOccupied() {
-        return crash(); // TODO: H6.2 - remove if implemented
+        Set<AbstractOccupied<?>> set = new HashSet<>();
+        set.addAll(occupiedNodes.values());
+        set.addAll(occupiedEdges.values());
+        return Collections.unmodifiableSet(set);
     }
 
     private OccupiedNodeImpl<? extends Region.Node> getOccupiedNode(Location location) {
@@ -73,7 +92,24 @@ class VehicleManagerImpl implements VehicleManager {
 
     @Override
     public <C extends Region.Component<C>> AbstractOccupied<C> getOccupied(C component) {
-        return crash(); // TODO: H6.3 - remove if implemented
+        if (component == null) {
+            throw new NullPointerException("Component is null!");
+        }
+        else if (!(component instanceof Region.Node || component instanceof Region.Edge)) {
+            throw new IllegalArgumentException("Component is not of recognized subtype: "+component.getClass().getName());
+        }
+        else if (component instanceof Region.Node) {
+            if (occupiedNodes.containsKey(component)) {
+                return (AbstractOccupied<C>) occupiedNodes.get(component);
+            }
+            else throw new IllegalArgumentException("Could not find occupied node for "+component);
+        }
+        else {
+            if (occupiedEdges.containsKey(component)) {
+                return (AbstractOccupied<C>) occupiedEdges.get(component);
+            }
+            else throw new IllegalArgumentException("Could not find occupied edge for "+component);
+        }
     }
 
     @Override
@@ -86,7 +122,13 @@ class VehicleManagerImpl implements VehicleManager {
 
     @Override
     public OccupiedRestaurant getOccupiedRestaurant(Region.Node node) {
-        return crash(); // TODO: H6.4- remove if implemented
+        if (node == null) {
+            throw new NullPointerException("Node is null!");
+        }
+        else if (!occupiedNodes.containsKey(node) || !(occupiedNodes.get(node) instanceof OccupiedRestaurant)) {
+            throw new IllegalArgumentException("Node "+node+" is not a restaurant");
+        }
+        return (OccupiedRestaurant) occupiedNodes.get(node);
     }
 
     @Override
@@ -99,7 +141,13 @@ class VehicleManagerImpl implements VehicleManager {
 
     @Override
     public OccupiedNeighborhood getOccupiedNeighborhood(Region.Node node) {
-        return crash(); // TODO: H6.4 - remove if implemented
+        if (node == null) {
+            throw new NullPointerException("Node is null!");
+        }
+        else if (!occupiedNodes.containsKey(node) || !(occupiedNodes.get(node) instanceof OccupiedNeighborhood)) {
+            throw new IllegalArgumentException("Node "+node+" is not a neighborhood");
+        }
+        return (OccupiedNeighborhood) occupiedNodes.get(node);
     }
 
     @Override
