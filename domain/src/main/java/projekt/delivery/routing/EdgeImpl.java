@@ -3,6 +3,9 @@ package projekt.delivery.routing;
 import org.jetbrains.annotations.NotNull;
 import projekt.base.Location;
 
+import java.util.Comparator;
+import java.util.Objects;
+
 import static org.tudalgo.algoutils.student.Student.crash;
 
 /**
@@ -76,31 +79,44 @@ class EdgeImpl implements Region.Edge {
 
     @Override
     public Region.Node getNodeA() {
-        return crash(); // TODO: H4.1 - remove if implemented
+        return region.getNode(getLocationA());
     }
 
     @Override
     public Region.Node getNodeB() {
-        return crash(); // TODO: H4.1 - remove if implemented
+        return region.getNode(getLocationB());
     }
 
     @Override
     public int compareTo(Region.@NotNull Edge o) {
-        return crash(); // TODO: H4.2 - remove if implemented
+        Comparator<Region.Edge> comparator = Comparator
+            .comparing(Region.Edge::getNodeA)
+            .thenComparing(Region.Edge::getNodeB);
+
+        return comparator.compare(this, o);
     }
 
     @Override
     public boolean equals(Object o) {
-        return crash(); // TODO: H4.3 - remove if implemented
+
+        if (!(o instanceof EdgeImpl)) {
+            return false;
+        }
+
+        EdgeImpl edge = (EdgeImpl) o;
+        return (this == o) || (Objects.equals(name, edge.name) &&
+            Objects.equals(locationA, edge.locationA) &&
+            Objects.equals(locationB, edge.locationB) &&
+            duration == edge.duration);
     }
 
     @Override
     public int hashCode() {
-        return crash(); // TODO: H4.4 - remove if implemented
+        return Objects.hash(name,locationA,locationB,duration);
     }
 
     @Override
     public String toString() {
-        return crash(); // TODO: H4.5 - remove if implemented
+        return "EdgeImpl(name='"+name+"', locationA='"+locationA.toString()+"', locationB='"+locationB.toString()+"', duration='"+duration+"')";
     }
 }
