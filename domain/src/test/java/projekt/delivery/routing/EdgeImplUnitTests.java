@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import projekt.ComparableUnitTests;
 import projekt.ObjectUnitTests;
+import projekt.base.Location;
+
+import java.util.HashSet;
 
 import static org.tudalgo.algoutils.student.Student.crash;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,41 +25,63 @@ public class EdgeImplUnitTests {
 
     @BeforeAll
     public static void initialize() {
-        crash(); // TODO: H12.5 - remove if implemented
+        RegionImpl testRegion = new RegionImpl();
+        HashSet testHashset = new HashSet<>();
+        testHashset.add(testRegion);
+
+        nodeA = new NodeImpl(testRegion, "Node A", new Location(0, 0), testHashset);
+        nodeB = new NodeImpl(testRegion, "Node B", new Location(0, 1), testHashset);
+        nodeC = new NodeImpl(testRegion, "Node C", new Location(1, 1), testHashset);
+
+        edgeAA = new EdgeImpl(testRegion, "Edge AA", nodeA.getLocation(), nodeA.getLocation(), 0);
+        edgeAB = new EdgeImpl(testRegion, "Edge AA", nodeA.getLocation(), nodeB.getLocation(), 5);
+        edgeBC = new EdgeImpl(testRegion, "Edge AA", nodeB.getLocation(), nodeC.getLocation(), 5);
+
+        testRegion.putNode(nodeA);
+        testRegion.putNode(nodeB);
+        testRegion.putNode(nodeC);
+        testRegion.putEdge(edgeAA);
+        testRegion.putEdge(edgeAB);
+        testRegion.putEdge(edgeBC);
     }
 
     @Test
     public void testEquals() {
-        crash(); // TODO: H12.5 - remove if implemented
+        objectUnitTests.testEquals();
     }
 
     @Test
     public void testHashCode() {
-        crash(); // TODO: H12.5 - remove if implemented
+        objectUnitTests.testHashCode();
     }
 
     @Test
     public void testToString() {
-        crash(); // TODO: H12.5 - remove if implemented
+        objectUnitTests.testToString();
     }
 
     @Test
     public void testBiggerThen() {
-        crash(); // TODO: H12.5 - remove if implemented
+        comparableUnitTests.testBiggerThen();
     }
 
     @Test
     public void testAsBigAs() {
-        crash(); // TODO: H12.5 - remove if implemented
+        comparableUnitTests.testAsBigAs();
     }
 
     @Test
     public void testLessThen() {
-        crash(); // TODO: H12.5 - remove if implemented
+        comparableUnitTests.testLessThen();
     }
 
     @Test
     public void testGetNode() {
-        crash(); // TODO: H12.5 - remove if implemented
+        assertEquals(edgeAA.getNodeA(), nodeA);
+        assertNull(edgeAA.getNodeB());
+        assertEquals(edgeAB.getNodeA(), nodeA);
+        assertEquals(edgeAB.getNodeB(), nodeB);
+        assertNull(edgeBC.getNodeA());
+        assertEquals(edgeBC.getNodeB(), nodeB);
     }
 }
