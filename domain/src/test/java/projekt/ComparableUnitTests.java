@@ -18,19 +18,36 @@ public class ComparableUnitTests<T extends Comparable<? super T>> {
 
     @SuppressWarnings("unchecked")
     public void initialize(int testObjectCount) {
-        crash(); // TODO: H12.1 - remove if implemented
+        for (int i = 0; i < testObjectCount; i++) {
+            testObjects[i] = testObjectFactory.apply(i);
+        }
     }
 
-    public void testBiggerThen() {
-        crash(); // TODO: H12.1 - remove if implemented
+    public void testBiggerThen() {                          // das ist ziemlich Scheiße gelöst H12.1 2. Abschnitt
+        for (int i = 0; i < testObjects.length; i++) {      // analog testLessThan auch Scheiße
+            for (int j = i - 1; j >= 0; j--) {
+                int k = testObjects[i].compareTo(testObjects[j]);
+                if (k > 0) k = 1;
+                assertEquals(k, 1);
+            }
+        }
     }
 
     @SuppressWarnings("EqualsWithItself")
     public void testAsBigAs() {
-        crash(); // TODO: H12.1 - remove if implemented
+        for (int i = 0; i < testObjects.length; i++) {
+            assertEquals(testObjects[i].compareTo(testObjects[i]), 0);
+
+        }
     }
 
-    public void testLessThen() {
-        crash(); // TODO: H12.1 - remove if implemented
+    public void testLessThen() {                            // analog
+        for (int i = 0; i < testObjects.length; i++) {
+            for (int j = i + 1; j < testObjects.length; j++) {
+                int k = testObjects[i].compareTo(testObjects[j]);
+                if (k < 0) k = -1;
+                assertEquals(k, -1);
+            }
+        }
     }
 }
