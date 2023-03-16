@@ -1,5 +1,7 @@
 package projekt.delivery.rating;
 
+import projekt.delivery.event.ArrivedAtNodeEvent;
+import projekt.delivery.event.DeliverOrderEvent;
 import projekt.delivery.event.Event;
 import projekt.delivery.routing.PathCalculator;
 import projekt.delivery.routing.Region;
@@ -24,6 +26,9 @@ public class TravelDistanceRater implements Rater {
     private final PathCalculator pathCalculator;
     private final double factor;
 
+    private double actualDistance = 0.0;
+    private double worstDistance = 0.0;
+
     private TravelDistanceRater(VehicleManager vehicleManager, double factor) {
         region = vehicleManager.getRegion();
         pathCalculator = vehicleManager.getPathCalculator();
@@ -32,7 +37,11 @@ public class TravelDistanceRater implements Rater {
 
     @Override
     public double getScore() {
-        return crash(); // TODO: H8.3 - remove if implemented
+        double d = 1 - actualDistance / (worstDistance * factor);
+
+        if (0 <= actualDistance && actualDistance < worstDistance * factor)
+            return d;
+        else return 0;
     }
 
     @Override
@@ -42,7 +51,16 @@ public class TravelDistanceRater implements Rater {
 
     @Override
     public void onTick(List<Event> events, long tick) {
-        crash(); // TODO: H8.3 - remove if implemented
+        for (Event event : events) {
+            if (event instanceof DeliverOrderEvent) {
+                DeliverOrderEvent order = (DeliverOrderEvent) event;
+                //worstDistance += pathCalculator.getPath(order.getNode().getEdge(), order.getNode()); //
+
+            } else if (event instanceof ArrivedAtNodeEvent){
+                ArrivedAtNodeEvent order = (ArrivedAtNodeEvent) event;
+                actualDistance += order.getLastEdge().getDuration();
+            }
+        }
     }
 
     /**
