@@ -1,11 +1,13 @@
 package projekt.delivery.generator;
 
+import projekt.base.Location;
+import projekt.base.TickInterval;
 import projekt.delivery.routing.ConfirmedOrder;
+import projekt.delivery.routing.Region;
 import projekt.delivery.routing.VehicleManager;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static org.tudalgo.algoutils.student.Student.crash;
 
@@ -18,6 +20,11 @@ import static org.tudalgo.algoutils.student.Student.crash;
 public class FridayOrderGenerator implements OrderGenerator {
 
     private final Random random;
+
+    private Map<Long,List<ConfirmedOrder>> orders = new HashMap<>();
+
+    private List<VehicleManager.OccupiedNeighborhood> neighborhoods;
+    private List<VehicleManager.OccupiedRestaurant> restaurants;
 
     /**
      * Creates a new {@link FridayOrderGenerator} with the given parameters.
@@ -32,12 +39,38 @@ public class FridayOrderGenerator implements OrderGenerator {
      */
     private FridayOrderGenerator(int orderCount, VehicleManager vehicleManager, int deliveryInterval, double maxWeight, double variance, long lastTick, int seed) {
         random = seed < 0 ? new Random() : new Random(seed);
-        crash(); // TODO: H7.1 - remove if implemented
+        neighborhoods = vehicleManager.getOccupiedNeighborhoods().stream().toList();
+        restaurants = vehicleManager.getOccupiedRestaurants().stream().toList();
+
+        for (long i=0; i<=lastTick; i++) {
+            orders.put(i,new ArrayList<>());
+        }
+        for (int i=0; i<orderCount; i++) {
+            double normal;
+            do {
+                normal = random.nextGaussian(0.5, variance);
+            } while (normal>1||normal<0);
+            long tick =  Math.round(lastTick * normal);
+            Location location = neighborhoods.get(random.nextInt(0, neighborhoods.size())).getComponent().getLocation();
+            VehicleManager.OccupiedRestaurant restaurant = restaurants.get(random.nextInt(0, restaurants.size()));
+            TickInterval interval = new TickInterval(tick,tick+deliveryInterval);
+            List<String> foodList = new ArrayList<>();
+            int foodCount = random.nextInt(1,10);
+            for (int j=0; j<foodCount; j++) {
+                foodList.add(restaurant.getComponent().getAvailableFood().get(random.nextInt(0,restaurant.getComponent().getAvailableFood().size())));
+            }
+            double weight = random.nextDouble(0,maxWeight);
+            ConfirmedOrder order = new ConfirmedOrder(location,restaurant,interval,foodList,weight);
+            orders.get(tick).add(order);
+        }
     }
 
     @Override
     public List<ConfirmedOrder> generateOrders(long tick) {
-        return crash(); // TODO: H7.1 - remove if implemented
+        if (orders.get(tick) == null) {
+            orders.put(tick,List.of());
+        }
+        return orders.get(tick);
     }
 
     /**
