@@ -69,3 +69,4 @@ public class BasicDeliveryService extends AbstractDeliveryService {
         BasicDeliveryService create(VehicleManager vehicleManager);
     }
 }
+//test
