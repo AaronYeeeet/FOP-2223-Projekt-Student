@@ -25,6 +25,8 @@ public class InTimeRater implements Rater {
 
     private long actualTotalTicksOff;
 
+    private int orderAmount;
+
     /**
      * Creates a new {@link InTimeRater} instance.
      * @param ignoredTicksOff The amount of ticks this {@link InTimeRater} ignores when dealing with an {@link ConfirmedOrder} that didn't get delivered in time.
@@ -40,38 +42,38 @@ public class InTimeRater implements Rater {
 
     @Override
     public double getScore() {
-
-        if (maxTicksOff == 0 || i == 0)
-            return 0;
-        else return 1 - (actualTotalTicksOff / totalMaxTicksOff);
+        double r;
+        if (maxTicksOff == 0 ||totalMaxTicksOff == 0)
+            r =  0;
+        else r = 1 - (double) actualTotalTicksOff / (double) totalMaxTicksOff;
+        return r;
     }
-int i = 0;
+
     @Override
     public void onTick(List<Event> events, long tick) {
         for (Event event : events) {
-            if (event instanceof ConfirmedOrder) {
-                ConfirmedOrder order = (ConfirmedOrder) event;
+            if (event instanceof OrderReceivedEvent) {
+                totalMaxTicksOff += maxTicksOff;
+                actualTotalTicksOff += maxTicksOff;
+            }
+            if (event instanceof DeliverOrderEvent orderEvent) {
+                ConfirmedOrder order = orderEvent.getOrder();
 
                 long intervalStart = order.getDeliveryInterval().start();
                 long intervalEnd = order.getDeliveryInterval().end();
                 long actual = order.getActualDeliveryTick();
                 //if (order.getActualDeliveryTick() != null)
-
-
-                i++;
-                totalMaxTicksOff += maxTicksOff;
-                long tmp;
+                long tmp = 0;
                 if (actual < intervalStart - ignoredTicksOff){
                     tmp = intervalStart - ignoredTicksOff - actual;
                     if (tmp > maxTicksOff)
                         tmp = maxTicksOff;
-                    actualTotalTicksOff += tmp;
                 } else if (actual > intervalEnd + ignoredTicksOff){
-                    tmp = actual - intervalEnd + ignoredTicksOff;
+                    tmp = actual - (intervalEnd + ignoredTicksOff);
                     if (tmp > maxTicksOff)
                         tmp = maxTicksOff;
-                    actualTotalTicksOff += tmp;
                 }
+                actualTotalTicksOff -= (maxTicksOff - tmp);
             } /*else if (event instanceof OrderReceivedEvent){
                 i++;
                 totalMaxTicksOff += maxTicksOff;
