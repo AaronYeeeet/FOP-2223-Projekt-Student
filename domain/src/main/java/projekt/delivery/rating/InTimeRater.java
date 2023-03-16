@@ -1,6 +1,8 @@
 package projekt.delivery.rating;
 
+import projekt.delivery.event.DeliverOrderEvent;
 import projekt.delivery.event.Event;
+import projekt.delivery.event.OrderReceivedEvent;
 import projekt.delivery.routing.ConfirmedOrder;
 import projekt.delivery.simulation.Simulation;
 
@@ -19,6 +21,9 @@ public class InTimeRater implements Rater {
 
     private final long ignoredTicksOff;
     private final long maxTicksOff;
+    private long totalMaxTicksOff;
+
+    private long actualTotalTicksOff;
 
     /**
      * Creates a new {@link InTimeRater} instance.
@@ -35,12 +40,44 @@ public class InTimeRater implements Rater {
 
     @Override
     public double getScore() {
-        return crash(); // TODO: H8.2 - remove if implemented
-    }
 
+        if (maxTicksOff == 0 || i == 0)
+            return 0;
+        else return 1 - (actualTotalTicksOff / totalMaxTicksOff);
+    }
+int i = 0;
     @Override
     public void onTick(List<Event> events, long tick) {
-        crash(); // TODO: H8.2 - remove if implemented
+        for (Event event : events) {
+            if (event instanceof ConfirmedOrder) {
+                ConfirmedOrder order = (ConfirmedOrder) event;
+
+                long intervalStart = order.getDeliveryInterval().start();
+                long intervalEnd = order.getDeliveryInterval().end();
+                long actual = order.getActualDeliveryTick();
+                //if (order.getActualDeliveryTick() != null)
+
+
+                i++;
+                totalMaxTicksOff += maxTicksOff;
+                long tmp;
+                if (actual < intervalStart - ignoredTicksOff){
+                    tmp = intervalStart - ignoredTicksOff - actual;
+                    if (tmp > maxTicksOff)
+                        tmp = maxTicksOff;
+                    actualTotalTicksOff += tmp;
+                } else if (actual > intervalEnd + ignoredTicksOff){
+                    tmp = actual - intervalEnd + ignoredTicksOff;
+                    if (tmp > maxTicksOff)
+                        tmp = maxTicksOff;
+                    actualTotalTicksOff += tmp;
+                }
+            } /*else if (event instanceof OrderReceivedEvent){
+                i++;
+                totalMaxTicksOff += maxTicksOff;
+                actualTotalTicksOff += maxTicksOff;
+            }*/
+        }
     }
 
     /**
