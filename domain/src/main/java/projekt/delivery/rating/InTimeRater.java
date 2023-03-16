@@ -134,6 +134,7 @@ public class InTimeRater implements Rater {
             return this;
         }
 
+
         @Override
         public Factory build() {
             return new Factory(ignoredTicksOff, maxTicksOff);
