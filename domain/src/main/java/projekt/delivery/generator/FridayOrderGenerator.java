@@ -59,13 +59,17 @@ public class FridayOrderGenerator implements OrderGenerator {
             for (int j=0; j<foodCount; j++) {
                 foodList.add(restaurant.getComponent().getAvailableFood().get(random.nextInt(0,restaurant.getComponent().getAvailableFood().size())));
             }
-            ConfirmedOrder order = new ConfirmedOrder(location,restaurant,interval,foodList,maxWeight);
+            double weight = random.nextDouble(0,maxWeight);
+            ConfirmedOrder order = new ConfirmedOrder(location,restaurant,interval,foodList,weight);
             orders.get(tick).add(order);
         }
     }
 
     @Override
     public List<ConfirmedOrder> generateOrders(long tick) {
+        if (orders.get(tick) == null) {
+            orders.put(tick,List.of());
+        }
         return orders.get(tick);
     }
 

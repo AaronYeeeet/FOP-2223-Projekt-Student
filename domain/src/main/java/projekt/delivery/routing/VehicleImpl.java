@@ -51,12 +51,43 @@ class VehicleImpl implements Vehicle {
 
     @Override
     public void moveDirect(Region.Node node, BiConsumer<? super Vehicle, Long> arrivalAction) {
-        crash(); // TODO: H5.4 - remove if implemented
+        PathImpl nextPath = moveQueue.peek();
+        moveQueue.clear();
+        if (getOccupied().getComponent() instanceof Region.Node){
+            if (getOccupied().getComponent() == node){
+                throw new IllegalArgumentException();
+            }else{
+                moveQueued(node,arrivalAction);
+            }
+        }
+
+         else{
+             PathImpl path = new PathImpl( new LinkedList<>(List.of(nextPath.nodes().getFirst())),arrivalAction);
+            moveQueue.add(path);
+            moveQueued(node,arrivalAction);
+         }
+
     }
 
     @Override
     public void moveQueued(Region.Node node, BiConsumer<? super Vehicle, Long> arrivalAction) {
-        crash(); // TODO: H5.3 - remove if implemented
+        try {
+            checkMoveToNode(node);
+            if (!moveQueue.isEmpty()){
+                moveQueue.add(new PathImpl(vehicleManager.getPathCalculator().getPath(moveQueue.getLast().nodes.getLast(),node), arrivalAction));
+            }else{
+                Region.Node startNode;
+                if (getOccupied().getComponent() instanceof Region.Node){
+                    startNode = (Region.Node) getOccupied().getComponent();
+                }else{
+                    Region.Edge edge = (Region.Edge) getOccupied().getComponent();
+                    startNode = edge.getNodeB();
+                }
+                moveQueue.add(new PathImpl(vehicleManager.getPathCalculator().getPath(startNode,node), arrivalAction));
+            }
+        }catch (IllegalArgumentException e){
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     @Override
@@ -125,11 +156,15 @@ class VehicleImpl implements Vehicle {
     }
 
     void loadOrder(ConfirmedOrder order) {
-        crash(); // TODO: H5.2 - remove if implemented
+        if (getCurrentWeight() + order.getWeight() > getCapacity()) {
+            throw new VehicleOverloadedException(this,getCurrentWeight()+ order.getWeight());
+        }else{
+            orders.add(order);
+        }
     }
 
     void unloadOrder(ConfirmedOrder order) {
-        crash(); // TODO: H5.2 - remove if implemented
+        orders.remove(order);
     }
 
     @Override
