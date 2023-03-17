@@ -48,7 +48,7 @@ public class FridayOrderGenerator implements OrderGenerator {
         for (int i=0; i<orderCount; i++) {
             double normal;
             do {
-                normal = random.nextGaussian(0.5, variance);
+                normal = random.nextGaussian(0.5, standardDeviation);
             } while (normal>1||normal<0);
             long tick =  Math.round(lastTick * normal);
             Location location = neighborhoods.get(random.nextInt(0, neighborhoods.size())).getComponent().getLocation();

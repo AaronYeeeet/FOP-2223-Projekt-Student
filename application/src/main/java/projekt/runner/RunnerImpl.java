@@ -39,14 +39,15 @@ public class RunnerImpl implements Runner {
                 simulationSetupHandler.accept(simulation,problem,i);
                 simulation.runSimulation(problem.simulationLength());
                 if (simulationFinishedHandler.accept(simulation,problem)) return;
-                inTimeRatings.add(simulation.getRatingForCriterion(RatingCriteria.IN_TIME));
-                amountDeliveredRatings.add(simulation.getRatingForCriterion(RatingCriteria.AMOUNT_DELIVERED));
-                travelDistanceRatings.add(simulation.getRatingForCriterion(RatingCriteria.TRAVEL_DISTANCE));
+                if (problemGroup.ratingCriteria().contains(RatingCriteria.IN_TIME)) inTimeRatings.add(simulation.getRatingForCriterion(RatingCriteria.IN_TIME));
+                if (problemGroup.ratingCriteria().contains(RatingCriteria.AMOUNT_DELIVERED)) amountDeliveredRatings.add(simulation.getRatingForCriterion(RatingCriteria.AMOUNT_DELIVERED));
+                if (problemGroup.ratingCriteria().contains(RatingCriteria.TRAVEL_DISTANCE)) travelDistanceRatings.add(simulation.getRatingForCriterion(RatingCriteria.TRAVEL_DISTANCE));
             }
         }
-        Map<RatingCriteria,Double> result = Map.of(RatingCriteria.IN_TIME,inTimeRatings.stream().mapToDouble(d -> d).average().orElse(0),
-                                                    RatingCriteria.AMOUNT_DELIVERED,amountDeliveredRatings.stream().mapToDouble(d -> d).average().orElse(0),
-                                                    RatingCriteria.TRAVEL_DISTANCE,travelDistanceRatings.stream().mapToDouble(d -> d).average().orElse(0));
+        Map<RatingCriteria,Double> result = new HashMap<>();
+        if (problemGroup.ratingCriteria().contains(RatingCriteria.IN_TIME)) result.put(RatingCriteria.IN_TIME,inTimeRatings.stream().mapToDouble(d -> d).average().orElse(0));
+        if (problemGroup.ratingCriteria().contains(RatingCriteria.IN_TIME)) result.put(RatingCriteria.AMOUNT_DELIVERED,amountDeliveredRatings.stream().mapToDouble(d -> d).average().orElse(0));
+        if (problemGroup.ratingCriteria().contains(RatingCriteria.TRAVEL_DISTANCE)) result.put(RatingCriteria.TRAVEL_DISTANCE,travelDistanceRatings.stream().mapToDouble(d -> d).average().orElse(0));
         resultHandler.accept(result);
     }
 

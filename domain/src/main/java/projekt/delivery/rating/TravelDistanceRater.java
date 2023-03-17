@@ -1,5 +1,6 @@
 package projekt.delivery.rating;
 
+import projekt.base.EuclideanDistanceCalculator;
 import projekt.delivery.event.ArrivedAtNodeEvent;
 import projekt.delivery.event.DeliverOrderEvent;
 import projekt.delivery.event.Event;
@@ -8,6 +9,7 @@ import projekt.delivery.routing.Region;
 import projekt.delivery.routing.VehicleManager;
 import projekt.delivery.simulation.Simulation;
 
+import java.util.Deque;
 import java.util.List;
 
 import static org.tudalgo.algoutils.student.Student.crash;
@@ -37,9 +39,9 @@ public class TravelDistanceRater implements Rater {
 
     @Override
     public double getScore() {
-        double d = 1 - actualDistance / (worstDistance * factor);
+        double d = 1 - (actualDistance / (worstDistance * factor));
 
-        if (0 <= actualDistance && actualDistance < worstDistance * factor)
+        if (0 <= actualDistance && actualDistance < (worstDistance * factor))
             return d;
         else return 0;
     }
@@ -52,13 +54,16 @@ public class TravelDistanceRater implements Rater {
     @Override
     public void onTick(List<Event> events, long tick) {
         for (Event event : events) {
-            if (event instanceof DeliverOrderEvent) {
-                DeliverOrderEvent order = (DeliverOrderEvent) event;
-                //worstDistance += pathCalculator.getPath(order.getNode().getEdge(), order.getNode()); //
+            if (event instanceof DeliverOrderEvent deliverOrderEvent) {
+                Deque<Region.Node> worstPath = pathCalculator.getPath(deliverOrderEvent.getVehicle().getStartingNode().getComponent(), deliverOrderEvent.getNode());
 
-            } else if (event instanceof ArrivedAtNodeEvent){
-                ArrivedAtNodeEvent order = (ArrivedAtNodeEvent) event;
-                actualDistance += order.getLastEdge().getDuration();
+                Region.Node previous = deliverOrderEvent.getVehicle().getStartingNode().getComponent();
+                for (Region.Node node : worstPath) {
+                    worstDistance += region.getEdge(previous,node).getDuration()*2;
+                }
+
+            } else if (event instanceof ArrivedAtNodeEvent arrivedAtNodeEvent){
+                actualDistance += arrivedAtNodeEvent.getLastEdge().getDuration();
             }
         }
     }
