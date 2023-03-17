@@ -63,9 +63,7 @@ public class MainMenuScene extends MenuScene<MainMenuSceneController> {
         optionsVbox.getChildren().addAll(
             createStartSimulationButton(),
             createSimulationRunsHBox(),
-            createDeliveryServiceChoiceBox(),
-            new Label("Available problems:"),
-            problemsListView
+            createDeliveryServiceChoiceBox()
         );
 
         optionsVbox.getChildren().stream()
