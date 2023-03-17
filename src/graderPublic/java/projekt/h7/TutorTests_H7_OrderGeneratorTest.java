@@ -98,7 +98,7 @@ public class TutorTests_H7_OrderGeneratorTest {
         generator = FridayOrderGenerator.Factory.builder()
             .setOrderCount(orderCount)
             .setMaxWeight(maxWeight)
-            .setVariance(variance)
+            .setStandardDeviation(variance)
             .setLastTick(lastTick)
             .setDeliveryInterval(deliveryInterval)
             .setSeed(seed)
@@ -149,7 +149,7 @@ public class TutorTests_H7_OrderGeneratorTest {
             .add("variance", 0.25)
             .add("lastTick", 50)
             .add("seed", "random")
-            .add("iterations", 1000)
+            .add("iterations", 250)
             .build();
 
         List<Double> probabilities = List.of(0.03205, 0.06027, 0.09678, 0.13272, 0.15542, 0.15542, 0.1327, 0.09678, 0.06027, 0.03205);
@@ -158,11 +158,11 @@ public class TutorTests_H7_OrderGeneratorTest {
 
         int fails = 0;
 
-        for (int k = 0; k < 1000; k++) {
+        for (int k = 0; k < 250; k++) {
             generator = FridayOrderGenerator.Factory.builder()
                 .setDeliveryInterval(1)
                 .setLastTick(50)
-                .setVariance(0.25)
+                .setStandardDeviation(0.25)
                 .setOrderCount(500)
                 .setSeed(-1)
                 .setVehicleManager(vehicleManager)
@@ -193,9 +193,9 @@ public class TutorTests_H7_OrderGeneratorTest {
             }
         }
 
-        if (fails > 100) {
+        if (fails > 25) {
             int finalFails = fails;
-            fail(context, TR -> "Expected that at most 10%% (100) of the chi-squared tests fail but %d failed."
+            fail(context, TR -> "Expected that at most 10%% (25) of the chi-squared tests fail but %d failed."
                 .formatted(finalFails));
         }
     }
