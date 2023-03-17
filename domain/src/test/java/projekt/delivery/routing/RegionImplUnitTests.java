@@ -22,10 +22,14 @@ public class RegionImplUnitTests {
     @BeforeAll
     public static void initialize() {
         Function<Integer, RegionImpl> testObjectFactory = i -> {
-            int x = i % 10;
-            int y = i % 7;
-            // knoten + kanten ????
-            return new RegionImpl();
+            RegionImpl region = new RegionImpl();
+            NodeImpl node1 = new NodeImpl(region, null, new Location(i,i),null);
+            NodeImpl node2 = new NodeImpl(region, null, new Location(i+1,i-1),null);
+            EdgeImpl edge = new EdgeImpl(region,null,node1.getLocation(),node2.getLocation(),i);
+            region.putNode(node1);
+            region.putNode(node2);
+            region.putEdge(edge);
+            return region;
         };
 
 
@@ -49,9 +53,9 @@ public class RegionImplUnitTests {
 
         RegionImpl testObject = new RegionImpl();
 
-        NodeImpl nodeA = new NodeImpl(testObject, "Region A", new Location(0,0), new HashSet<>());
-        NodeImpl nodeB = new NodeImpl(testObject, "Region A", new Location(1,0), new HashSet<>());
-        NodeImpl nodeC = new NodeImpl(testObject, "Region A", new Location(0,1), new HashSet<>());
+        NodeImpl nodeA = new NodeImpl(testObject, "Node A", new Location(0,0), new HashSet<>());
+        NodeImpl nodeB = new NodeImpl(testObject, "Node B", new Location(1,0), new HashSet<>());
+        NodeImpl nodeC = new NodeImpl(testObject, "Node C", new Location(0,1), new HashSet<>());
         testObject.putNode(nodeA);
         testObject.putNode(nodeB);
         testObject.putNode(nodeC);
@@ -66,8 +70,8 @@ public class RegionImplUnitTests {
 
         assertNull(testObject.getNode(new Location(1,1)));
 
-        RegionImpl fasleRegion = new RegionImpl();
-        NodeImpl nodeFalse = new NodeImpl(fasleRegion, "Region False", new Location(0,0), new HashSet<>());
+        RegionImpl falseRegion = new RegionImpl();
+        NodeImpl nodeFalse = new NodeImpl(falseRegion, "Region False", new Location(0,0), new HashSet<>());
         assertThrowsExactly(IllegalArgumentException.class, () -> testObject.putNode(nodeFalse));
     }
 
@@ -75,16 +79,16 @@ public class RegionImplUnitTests {
     public void testEdges() {
         RegionImpl testObject = new RegionImpl();
 
-        NodeImpl nodeA = new NodeImpl(testObject, "Region A", new Location(0,0), new HashSet<>());
-        NodeImpl nodeB = new NodeImpl(testObject, "Region A", new Location(1,0), new HashSet<>());
-        NodeImpl nodeC = new NodeImpl(testObject, "Region A", new Location(0,1), new HashSet<>());
+        NodeImpl nodeA = new NodeImpl(testObject, "Node A", new Location(0,0), new HashSet<>());
+        NodeImpl nodeB = new NodeImpl(testObject, "Node B", new Location(1,0), new HashSet<>());
+        NodeImpl nodeC = new NodeImpl(testObject, "Node C", new Location(2,1), new HashSet<>());
         testObject.putNode(nodeA);
         testObject.putNode(nodeB);
         testObject.putNode(nodeC);
 
-        EdgeImpl aa = new EdgeImpl(testObject, "Kante A", nodeA.getLocation(), nodeA.getLocation(), 0);
-        EdgeImpl ab = new EdgeImpl(testObject, "Kante A", nodeA.getLocation(), nodeB.getLocation(), 0);
-        EdgeImpl bc = new EdgeImpl(testObject, "Kante A", nodeB.getLocation(), nodeC.getLocation(), 0);
+        EdgeImpl aa = new EdgeImpl(testObject, "Edge AA", nodeA.getLocation(), nodeA.getLocation(), 0);
+        EdgeImpl ab = new EdgeImpl(testObject, "Edge AB", nodeA.getLocation(), nodeB.getLocation(), 0);
+        EdgeImpl bc = new EdgeImpl(testObject, "Edge BC", nodeB.getLocation(), nodeC.getLocation(), 0);
         testObject.putEdge(aa);
         testObject.putEdge(ab);
         testObject.putEdge(bc);
@@ -98,15 +102,16 @@ public class RegionImplUnitTests {
         assertTrue(testObject.getEdges().contains(ab));
         assertTrue(testObject.getEdges().contains(bc));
 
-        RegionImpl fasleRegion = new RegionImpl();
-        EdgeImpl falseRegion = new EdgeImpl(fasleRegion, "Kante false", nodeB.getLocation(), nodeC.getLocation(), 0);
-        assertThrowsExactly(IllegalArgumentException.class, () -> testObject.putEdge(falseRegion));
+        RegionImpl falseRegion = new RegionImpl();
+        EdgeImpl falseEdgeEdge = new EdgeImpl(falseRegion, "Kante false", nodeB.getLocation(), nodeC.getLocation(), 0);
+        assertThrowsExactly(IllegalArgumentException.class, () -> testObject.putEdge(falseEdgeEdge));
 
-        NodeImpl nodeFalse = new NodeImpl(fasleRegion, "Region A", new Location(5,5), new HashSet<>());
-        EdgeImpl falseNode = new EdgeImpl(testObject, "Kante false", nodeFalse.getLocation(), nodeC.getLocation(), 0);
-        assertThrowsExactly(IllegalArgumentException.class, () -> testObject.putEdge(falseNode));
+        NodeImpl falseNode = new NodeImpl(falseRegion, "Region A", new Location(1,1), new HashSet<>());
+        EdgeImpl falseFirstNodeEdge = new EdgeImpl(testObject, "Erste Kante false", falseNode.getLocation(), nodeC.getLocation(), 0);
+        assertThrowsExactly(IllegalArgumentException.class, () -> testObject.putEdge(falseFirstNodeEdge));
 
-        EdgeImpl falseBoth = new EdgeImpl(fasleRegion, "Alles false", nodeFalse.getLocation(), nodeC.getLocation(), 0);
+        EdgeImpl falseSecondNodeEdge = new EdgeImpl(testObject, "Zweite Kante false", nodeA.getLocation(), falseNode.getLocation(), 0);
+        assertThrowsExactly(IllegalArgumentException.class, () -> testObject.putEdge(falseSecondNodeEdge));
 
         assertNull(testObject.getEdge(new Location(69, 420), new Location(1337, 187)));
     }

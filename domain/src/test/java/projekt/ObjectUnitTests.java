@@ -26,12 +26,9 @@ public class ObjectUnitTests<T> {
         testObjectsContentEquality = (T[]) new Object[testObjectCount];
 
         for (int i = 0; i < testObjectCount; i++) {
-            T obj = testObjectFactory.apply(i);
-            testObjects[i] = obj;
+            testObjects[i] = testObjectFactory.apply(i);
+            testObjectsContentEquality[i] = testObjectFactory.apply(i);
             testObjectsReferenceEquality[i] = testObjects[i];
-            do {
-                testObjectsContentEquality[i] = testObjectFactory.apply(i);
-            } while (testObjectsContentEquality[i].equals(testObjects[i]));
         }
     }
 
