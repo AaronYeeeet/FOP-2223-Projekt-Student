@@ -3,10 +3,7 @@ package projekt.gui.scene;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
@@ -26,6 +23,7 @@ import projekt.runner.RunnerImpl;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class MainMenuScene extends MenuScene<MainMenuSceneController> {
 
@@ -56,10 +54,18 @@ public class MainMenuScene extends MenuScene<MainMenuSceneController> {
         optionsVbox.setSpacing(10);
         optionsVbox.setPadding(preferredPadding);
 
+
+        ListView<String> problemsListView = new ListView<>();
+        problemsListView.setPrefHeight(100);
+        problemsListView.getItems().addAll(super.problems.stream().map(ProblemArchetype::toString).collect(Collectors.toList()));
+
+
         optionsVbox.getChildren().addAll(
             createStartSimulationButton(),
             createSimulationRunsHBox(),
-            createDeliveryServiceChoiceBox()
+            createDeliveryServiceChoiceBox(),
+            new Label("Available problems:"),
+            problemsListView
         );
 
         optionsVbox.getChildren().stream()
