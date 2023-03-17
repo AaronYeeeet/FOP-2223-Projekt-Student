@@ -18,6 +18,7 @@ public class ComparableUnitTests<T extends Comparable<? super T>> {
 
     @SuppressWarnings("unchecked")
     public void initialize(int testObjectCount) {
+        testObjects = (T[]) new Comparable<?>[testObjectCount];
         for (int i = 0; i < testObjectCount; i++) {
             testObjects[i] = testObjectFactory.apply(i);
         }

@@ -18,15 +18,7 @@ public class LocationUnitTests {
 
     @BeforeAll
     public static void initialize() {
-        Function<Integer, Location> testObjectFactory = i -> {
-            int x = i % 10;
-            int y = i / 7;
-            if (i <= 10) {
-                x = 7;
-                y = 12;
-            }
-            return new Location(x, y);
-        };
+        Function<Integer, Location> testObjectFactory = i -> new Location(i, i+1);
 
         Function<Location, String> toString = location -> {
             return "(" + location.getX() + "," + location.getY() + ")";
